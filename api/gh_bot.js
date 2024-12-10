@@ -27,7 +27,7 @@ export async function POST(request) {
         privateKey: privateKey,
     });
 
-    const octokit = github_app.getInstallationOctokit(installation_id);
+    const octokit = await github_app.getInstallationOctokit(installation_id);
 
     var chunks = []
     for await (const chunk of request.body) {
