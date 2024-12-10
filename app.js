@@ -97,3 +97,5 @@ app.listen(port, () => {
   console.log(`Server is listening for events`);
   console.log('Press Ctrl + C to quit.')
 });
+
+export default app;
