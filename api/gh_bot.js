@@ -32,6 +32,7 @@ export function POST(request) {
     var body = request.body;
 
     console.log(body)
+    console.log(body.challenge)
 
     
 
