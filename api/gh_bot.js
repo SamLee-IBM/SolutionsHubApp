@@ -69,7 +69,6 @@ export async function POST(request) {
             return new Response("Error creating repo", {status: 401});
         }
 
-        res.statusCode = 200;
         return new Response("Sucess!");
     }
     else {
