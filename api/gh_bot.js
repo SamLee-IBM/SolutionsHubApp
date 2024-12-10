@@ -54,7 +54,7 @@ export async function POST(request) {
             var eventData = bodyObj["event"]["columnValues"];
             var ce_org = "ibm-client-engineering";
             var data = {"owner": ce_org, "name": eventData["short_text1__1"]["value"], "description": eventData["long_text__1"]["text"]}
-            octokit.request("POST /repos/{org}/{template}/generate", {
+            const result = octokit.request("POST /repos/{org}/{template}/generate", {
                 org: ce_org,
                 template: "Quarto-Sample",
                 data: data,
@@ -63,6 +63,8 @@ export async function POST(request) {
                     "Accept": "application/vnd.github+json"
                 },
             });
+
+            console.log(result);
         
             } catch (error) {
                 if (error.response) {
