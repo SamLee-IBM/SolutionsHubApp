@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import {App} from "octokit";
 
-export const dynamic = 'force-dynamic'; // static by default, unless reading the request
+// export const dynamic = 'force-dynamic'; // static by default, unless reading the request
 export const runtime = 'nodejs';
 
 
