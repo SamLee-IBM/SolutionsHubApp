@@ -1,7 +1,4 @@
 {   
     "version": 2,
-    "cleanUrls": true,
-    "builds": [
-      { "src": "*.js", "use": "@vercel/node" }
-    ]
+    "cleanUrls": true
 }
