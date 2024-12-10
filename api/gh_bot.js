@@ -30,7 +30,7 @@ export function POST(request) {
     const octokit = github_app.getInstallationOctokit(installation_id);
 
     var chunks = []
-    req.on('data', chunk => {
+    request.on('data', chunk => {
         chunks.push(chunk);
     }).on('error', err => {
         // This prints the error message and stack trace to `stderr`.
