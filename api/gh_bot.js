@@ -10,7 +10,7 @@ export function GET(request) {
   return new Response(`Hello from ${process.env.VERCEL_REGION}`);
 }
 
-export function POST(request) {
+export async function POST(request) {
     // This reads your `.env` file and adds the variables from that file to the `process.env` object in Node.js.
     dotenv.config();
 
