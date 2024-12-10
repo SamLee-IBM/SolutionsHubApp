@@ -42,7 +42,7 @@ export async function POST(request) {
 
     if (Object.hasOwn(bodyObj, "challenge")) {
         
-        return Response(JSON.stringify(bodyObj))
+        return new Response(JSON.stringify(bodyObj))
     }
     else if (Object.hasOwn(bodyObj, "event")) {
        //Now create the repo on github
