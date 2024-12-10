@@ -41,10 +41,8 @@ export async function POST(request) {
     
 
     if (Object.hasOwn(bodyObj, "challenge")) {
-        const blob = new Blob([JSON.stringify(bodyObj)], {
-            type: "application/json",
-          });
-        return Response(blob)
+        
+        return Response(JSON.stringify(bodyObj))
     }
     else if (Object.hasOwn(bodyObj, "event")) {
        //Now create the repo on github
