@@ -29,10 +29,14 @@ export function POST(request) {
 
     const octokit = github_app.getInstallationOctokit(installation_id);
 
-    var body = request.body;
+    var chunks = []
+    for await (const chunk of request.body) {
+        chunks.push(chunk);
+    }
+    var body = Buffer.concat(chunks).toString();
+    const bodyObj = JSON.parse(body);
+    console.log(bodyObj)
 
-    console.log(body)
-    console.log(body.challenge)
 
     
 
