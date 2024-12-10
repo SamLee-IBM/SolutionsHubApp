@@ -21,6 +21,10 @@ export async function POST(request) {
     // This reads the contents of your private key file.
     const privateKey = process.env.PRIVATE_KEY
 
+    console.log(appId);
+    console.log(installation_id);
+    console.log(privateKey);
+
     // This creates a new instance of the Octokit App class.
     const github_app = new App({
         appId: appId,
@@ -69,7 +73,7 @@ export async function POST(request) {
             return new Response("Error creating repo", {status: 401});
         }
 
-        return new Response("Sucess!");
+        return new Response("Success!");
     }
     else {
         return new Response("request not recognized", {status: 401})
