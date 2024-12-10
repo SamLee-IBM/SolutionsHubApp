@@ -15,7 +15,7 @@ const privateKeyPath = process.env.PRIVATE_KEY_PATH;
 const installation_id = process.env.INSTALLATION_ID;
 
 // This reads the contents of your private key file.
-const privateKey = fs.readFileSync(privateKeyPath, "utf8");
+const privateKey = process.env.PRIVATE_KEY
 
 // This creates a new instance of the Octokit App class.
 const app = new App({
@@ -47,10 +47,12 @@ const customServer = http.createServer((req, res) => {
         else if (Object.hasOwn(bodyObj, "event")) {
            //Now create the repo on github
             try {
-                var eventData = bodyObj["event"]["columnValues"]
-                var data = {"name": eventData["short_text1__1"]["value"], "description": eventData["long_text__1"]["text"]}
-                octokit.request("POST /orgs/{org}/repos", {
-                    org: "ibm-client-engineering",
+                var eventData = bodyObj["event"]["columnValues"];
+                var ce_org = "ibm-client-engineering";
+                var data = {"owner": ce_org, "name": eventData["short_text1__1"]["value"], "description": eventData["long_text__1"]["text"]}
+                octokit.request("POST /repos/{org}/{template}/generate", {
+                    org: ce_org,
+                    template: "Quarto-Sample",
                     data: data,
                     headers: {
                         "x-github-api-version": "2022-11-28",
