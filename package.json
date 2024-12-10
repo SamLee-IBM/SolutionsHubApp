@@ -1,0 +1,21 @@
+{
+  "name": "webhook-app",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "server": "node app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@mondaydotcomorg/api": "^4.0.4",
+    "dotenv": "^16.4.5",
+    "octokit": "^4.0.2"
+  },
+  "devDependencies": {
+    "smee-client": "^2.0.4"
+  }
+}
