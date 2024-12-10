@@ -29,9 +29,9 @@ export function POST(request) {
 
     const octokit = github_app.getInstallationOctokit(installation_id);
 
-    console.log(request.body)
+    console.log(request.body.json())
 
-    var body = request.body;
+    var body = request.body.json();
 
     if (Object.hasOwn(body, "challenge")) {
         return new Response(body)
