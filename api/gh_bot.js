@@ -29,42 +29,52 @@ export function POST(request) {
 
     const octokit = github_app.getInstallationOctokit(installation_id);
 
-    console.log(request.json())
+    var chunks = []
+    req.on('data', chunk => {
+        chunks.push(chunk);
+    }).on('error', err => {
+        // This prints the error message and stack trace to `stderr`.
+        console.error(err.stack);
+    }).on('end', () => {
+        var body = Buffer.concat(chunks).toString();
+        // at this point, `body` has the entire request body stored in it as a string
+        console.log(body)
 
-    var body = request.json();
+        const bodyObj = JSON.parse(body)
 
-    if (Object.hasOwn(body, "challenge")) {
-        return new Response(body)
-    }
-    else if (Object.hasOwn(body, "event")) {
-       //Now create the repo on github
-        try {
-            var eventData = body["event"]["columnValues"];
-            var ce_org = "ibm-client-engineering";
-            var data = {"owner": ce_org, "name": eventData["short_text1__1"]["value"], "description": eventData["long_text__1"]["text"]}
-            octokit.request("POST /repos/{org}/{template}/generate", {
-                org: ce_org,
-                template: "Quarto-Sample",
-                data: data,
-                headers: {
-                    "x-github-api-version": "2022-11-28",
-                    "Accept": "application/vnd.github+json"
-                },
-            });
-        
-            } catch (error) {
-                if (error.response) {
-                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
-            }
-            console.error(error);
-
-            return new Response("Error creating repo", {status: 401});
+        if (Object.hasOwn(bodyObj, "challenge")) {
+            return new Response(bodyObj)
         }
+        else if (Object.hasOwn(bodyObj, "event")) {
+        //Now create the repo on github
+            try {
+                var eventData = bodyObj["event"]["columnValues"];
+                var ce_org = "ibm-client-engineering";
+                var data = {"owner": ce_org, "name": eventData["short_text1__1"]["value"], "description": eventData["long_text__1"]["text"]}
+                octokit.request("POST /repos/{org}/{template}/generate", {
+                    org: ce_org,
+                    template: "Quarto-Sample",
+                    data: data,
+                    headers: {
+                        "x-github-api-version": "2022-11-28",
+                        "Accept": "application/vnd.github+json"
+                    },
+                });
+            
+                } catch (error) {
+                    if (error.response) {
+                    console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                }
+                console.error(error);
 
-        res.statusCode = 200;
-        return new Response("Sucess!");
-    }
-    else {
-        return new Response("request not recognized", {status: 401})
-    }
+                return new Response("Error creating repo", {status: 401});
+            }
+
+            res.statusCode = 200;
+            return new Response("Sucess!");
+        }
+        else {
+            return new Response("request not recognized", {status: 401})
+        }
+    });
 }
