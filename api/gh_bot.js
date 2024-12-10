@@ -40,13 +40,13 @@ export async function POST(request) {
 
     
 
-    if (Object.hasOwn(body, "challenge")) {
-        return new Response(body)
+    if (Object.hasOwn(bodyObj, "challenge")) {
+        return new Response(bodyObj)
     }
-    else if (Object.hasOwn(body, "event")) {
+    else if (Object.hasOwn(bodyObj, "event")) {
        //Now create the repo on github
         try {
-            var eventData = body["event"]["columnValues"];
+            var eventData = bodyObj["event"]["columnValues"];
             var ce_org = "ibm-client-engineering";
             var data = {"owner": ce_org, "name": eventData["short_text1__1"]["value"], "description": eventData["long_text__1"]["text"]}
             octokit.request("POST /repos/{org}/{template}/generate", {
