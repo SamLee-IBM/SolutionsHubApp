@@ -3,8 +3,10 @@
 // You installed the `dotenv` and `octokit` modules earlier. The `@octokit/webhooks` is a dependency of the `octokit` module, so you don't need to install it separately. The `fs` and `http` dependencies are built-in Node.js modules.
 import dotenv from "dotenv";
 import {App} from "octokit";
-import fs from "fs";
 import http from "http";
+import express from 'express';
+
+const app = express();
 
 // This reads your `.env` file and adds the variables from that file to the `process.env` object in Node.js.
 dotenv.config();
@@ -18,14 +20,14 @@ const installation_id = process.env.INSTALLATION_ID;
 const privateKey = process.env.PRIVATE_KEY
 
 // This creates a new instance of the Octokit App class.
-const app = new App({
+const github_app = new App({
   appId: appId,
   privateKey: privateKey,
 });
 
-const octokit = await app.getInstallationOctokit(installation_id);
+const octokit = await github_app.getInstallationOctokit(installation_id);
 
-const customServer = http.createServer((req, res) => {
+app.post("/", (req, res) => {
  
     var chunks = []
     req.on('data', chunk => {
@@ -89,11 +91,9 @@ const customServer = http.createServer((req, res) => {
 //
 // For local development, your server will listen to port 3000 on `localhost`. When you deploy your app, you will change these values. For more information, see "[Deploy your app](#deploy-your-app)."
 const port = 3000;
-const host = 'localhost';
-const localWebhookUrl = `http://${host}:${port}`;
 
 // This creates a Node.js server that listens for incoming HTTP requests (including webhook payloads from GitHub) on the specified port. When the server receives a request, it executes the `middleware` function that you defined earlier. Once the server is running, it logs messages to the console to indicate that it is listening.
-customServer.listen(port, () => {
-  console.log(`Server is listening for events at: ${localWebhookUrl}`);
+app.listen(port, () => {
+  console.log(`Server is listening for events`);
   console.log('Press Ctrl + C to quit.')
 });
