@@ -52,15 +52,15 @@ export async function POST(request) {
             //create the repo
             var ce_org = "ibm-client-engineering";
             var data = {"owner": ce_org, "name": eventData["short_text1__1"]["value"], "description": eventData["long_text0__1"]["text"]}
-            const result = await octokit.request("POST /repos/{org}/{template}/generate", {
-                org: ce_org,
-                template: "solution-template-quarto",
-                data: data,
-                headers: {
-                    "x-github-api-version": "2022-11-28",
-                    "Accept": "application/vnd.github+json"
-                },
-            });
+            // const result = await octokit.request("POST /repos/{org}/{template}/generate", {
+            //     org: ce_org,
+            //     template: "solution-template-quarto",
+            //     data: data,
+            //     headers: {
+            //         "x-github-api-version": "2022-11-28",
+            //         "Accept": "application/vnd.github+json"
+            //     },
+            // });
 
 
             //assign user to the repo
