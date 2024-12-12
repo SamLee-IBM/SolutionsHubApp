@@ -52,40 +52,44 @@ export async function POST(request) {
             //create the repo
             var ce_org = "ibm-client-engineering";
             var data = {"owner": ce_org, "name": eventData["short_text1__1"]["value"], "description": eventData["long_text0__1"]["text"]}
-            // const result = await octokit.request("POST /repos/{org}/{template}/generate", {
-            //     org: ce_org,
-            //     template: "Quarto-Sample",
-            //     data: data,
-            //     headers: {
-            //         "x-github-api-version": "2022-11-28",
-            //         "Accept": "application/vnd.github+json"
-            //     },
-            // });
-
-            // console.log(result);
-            const email = eventData["email__1"]["email"];
-            //get username from email
-            const queryString = 'q=' + encodeURIComponent(`${email} in:email`);
-            const search_result = await octokit.request("GET /search/users", {
-                q: queryString,
+            const result = await octokit.request("POST /repos/{org}/{template}/generate", {
+                org: ce_org,
+                template: "solution-quarto-template",
+                data: data,
                 headers: {
                     "x-github-api-version": "2022-11-28",
                     "Accept": "application/vnd.github+json"
                 },
             });
-            console.log(search_result);
-            return new Response("Success!");
+
 
             //assign user to the repo
-            // const assign_result = await octokit.request("POST /repos/{org}/{template}/generate", {
-            //     org: ce_org,
-            //     template: "Quarto-Sample",
-            //     data: data,
-            //     headers: {
-            //         "x-github-api-version": "2022-11-28",
-            //         "Accept": "application/vnd.github+json"
-            //     },
-            // });
+            const username = eventData['short_text_Mjj51gLS']['value']
+            const assignResult = await octokit.request("PUT /repos/{org}/{repo}/collaborators/{username}", {
+                org: ce_org,
+                repo: data.name,
+                username: username,
+                headers: {
+                    "x-github-api-version": "2022-11-28",
+                    "Accept": "application/vnd.github+json"
+                },
+            });
+
+            console.log(assignResult)
+
+            //Apply custom properties to the repo
+            let customProps = {"property_name": "Technology", "value": eventData['multi_select5__1']['chosenValues'].map((prop) => prop.name)}
+            const propResult = await octokit.request("PATCH /repos/{org}/{repo}/properties/values", {
+                org: ce_org,
+                repo: data.name,
+                properties: [customProps],
+                headers: {
+                    "x-github-api-version": "2022-11-28",
+                    "Accept": "application/vnd.github+json"
+                },
+            });
+
+            console.log(propResult)
         
             } catch (error) {
                 if (error.response) {
