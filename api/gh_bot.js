@@ -49,7 +49,7 @@ export async function POST(request) {
        //Now create the repo on github
         try {
             var eventData = bodyObj["event"]["columnValues"];
-
+            console.log(eventData);
             //create the repo
             var ce_org = "ibm-client-engineering";
             var data = {"owner": ce_org, "name": eventData["short_text1__1"]["value"], "description": eventData["long_text__1"]["text"]}
