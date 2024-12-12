@@ -46,6 +46,7 @@ export async function POST(request) {
     else if (Object.hasOwn(bodyObj, "event")) {
        //Now create the repo on github
         try {
+            return new Response("stop")
             var eventData = bodyObj["event"]["columnValues"];
             console.log(eventData);
             console.log(eventData['multi_select5__1']['chosenValues'])
