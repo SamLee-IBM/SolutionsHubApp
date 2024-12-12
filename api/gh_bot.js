@@ -38,7 +38,7 @@ export async function POST(request) {
     const bodyObj = JSON.parse(body);
     console.log(bodyObj)
 
-
+    return new Response("Success!");
     
 
     if (Object.hasOwn(bodyObj, "challenge")) {
