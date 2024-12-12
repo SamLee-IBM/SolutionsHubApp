@@ -21,9 +21,6 @@ export async function POST(request) {
     // This reads the contents of your private key file.
     const privateKey = process.env.PRIVATE_KEY
 
-    console.log(appId);
-    console.log(installation_id);
-    console.log(privateKey);
 
     // This creates a new instance of the Octokit App class.
     const github_app = new App({
@@ -52,19 +49,44 @@ export async function POST(request) {
        //Now create the repo on github
         try {
             var eventData = bodyObj["event"]["columnValues"];
+
+            //create the repo
             var ce_org = "ibm-client-engineering";
             var data = {"owner": ce_org, "name": eventData["short_text1__1"]["value"], "description": eventData["long_text__1"]["text"]}
-            const result = await octokit.request("POST /repos/{org}/{template}/generate", {
-                org: ce_org,
-                template: "Quarto-Sample",
-                data: data,
+            // const result = await octokit.request("POST /repos/{org}/{template}/generate", {
+            //     org: ce_org,
+            //     template: "Quarto-Sample",
+            //     data: data,
+            //     headers: {
+            //         "x-github-api-version": "2022-11-28",
+            //         "Accept": "application/vnd.github+json"
+            //     },
+            // });
+
+            // console.log(result);
+            const email = "samuel.l@ibm.com"
+            //get username from email
+            const queryString = 'q=' + encodeURIComponent(`${email} in:email`);
+            const search_result = await octokit.request("GET /search/users", {
+                q: queryString,
                 headers: {
                     "x-github-api-version": "2022-11-28",
                     "Accept": "application/vnd.github+json"
                 },
             });
+            console.log(search_result);
+            
 
-            console.log(result);
+            //assign user to the repo
+            // const assign_result = await octokit.request("POST /repos/{org}/{template}/generate", {
+            //     org: ce_org,
+            //     template: "Quarto-Sample",
+            //     data: data,
+            //     headers: {
+            //         "x-github-api-version": "2022-11-28",
+            //         "Accept": "application/vnd.github+json"
+            //     },
+            // });
         
             } catch (error) {
                 if (error.response) {
