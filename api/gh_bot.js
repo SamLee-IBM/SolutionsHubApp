@@ -37,8 +37,6 @@ export async function POST(request) {
     var body = Buffer.concat(chunks).toString();
     const bodyObj = JSON.parse(body);
     console.log(bodyObj)
-
-    return new Response("Success!");
     
 
     if (Object.hasOwn(bodyObj, "challenge")) {
@@ -50,9 +48,10 @@ export async function POST(request) {
         try {
             var eventData = bodyObj["event"]["columnValues"];
             console.log(eventData);
+            console.log(eventData['multi_select5__1']['chosenValues'])
             //create the repo
             var ce_org = "ibm-client-engineering";
-            var data = {"owner": ce_org, "name": eventData["short_text1__1"]["value"], "description": eventData["long_text__1"]["text"]}
+            var data = {"owner": ce_org, "name": eventData["short_text1__1"]["value"], "description": eventData["long_text0__1"]["text"]}
             // const result = await octokit.request("POST /repos/{org}/{template}/generate", {
             //     org: ce_org,
             //     template: "Quarto-Sample",
@@ -64,7 +63,7 @@ export async function POST(request) {
             // });
 
             // console.log(result);
-            const email = "samuel.l@ibm.com"
+            const email = eventData["email__1"]["email"];
             //get username from email
             const queryString = 'q=' + encodeURIComponent(`${email} in:email`);
             const search_result = await octokit.request("GET /search/users", {
@@ -75,7 +74,7 @@ export async function POST(request) {
                 },
             });
             console.log(search_result);
-            
+            return new Response("Success!");
 
             //assign user to the repo
             // const assign_result = await octokit.request("POST /repos/{org}/{template}/generate", {
