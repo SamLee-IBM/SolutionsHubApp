@@ -46,23 +46,25 @@ export async function POST(request) {
     else if (Object.hasOwn(bodyObj, "event")) {
        //Now create the repo on github
         try {
+            return new Response("Success!");
             var eventData = bodyObj["event"]["columnValues"];
             console.log(eventData);
             console.log(eventData['multi_select5__1']['chosenValues'])
             //create the repo
+            const repoName = eventData["short_text1__1"]["value"].replaceAll(" ", "-");
             var ce_org = "ibm-client-engineering";
-            var data = {"owner": ce_org, "name": eventData["short_text1__1"]["value"], "description": eventData["long_text0__1"]["text"]}
-            // const result = await octokit.request("POST /repos/{org}/{template}/generate", {
-            //     org: ce_org,
-            //     template: "solution-template-quarto",
-            //     data: data,
-            //     headers: {
-            //         "x-github-api-version": "2022-11-28",
-            //         "Accept": "application/vnd.github+json"
-            //     },
-            // });
+            var data = {"owner": ce_org, "name": repoName, "description": eventData["long_text0__1"]["text"]}
+            const result = await octokit.request("POST /repos/{org}/{template}/generate", {
+                org: ce_org,
+                template: "solution-template-quarto",
+                data: data,
+                headers: {
+                    "x-github-api-version": "2022-11-28",
+                    "Accept": "application/vnd.github+json"
+                },
+            });
 
-            const repoName = data.name.replaceAll(" ", "-");
+            
             //assign user to the repo
             const username = eventData['short_text_Mjj51gLS']['value']
             const assignResult = await octokit.request("PUT /repos/{org}/{repo}/collaborators/{username}", {
@@ -82,7 +84,7 @@ export async function POST(request) {
             let customProps = {"property_name": "Technology", "value": eventData['multi_select5__1']['chosenValues'].map((prop) => prop.name)}
             const propResult = await octokit.request("PATCH /repos/{org}/{repo}/properties/values", {
                 org: ce_org,
-                repo: data.name,
+                repo: repoName,
                 properties: [customProps],
                 headers: {
                     "x-github-api-version": "2022-11-28",
