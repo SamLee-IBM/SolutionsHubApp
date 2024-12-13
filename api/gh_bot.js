@@ -62,7 +62,7 @@ export async function POST(request) {
             //     },
             // });
 
-            const repoName = data.name.replace(" ", "-");
+            const repoName = data.name.replaceAll(" ", "-");
             //assign user to the repo
             const username = eventData['short_text_Mjj51gLS']['value']
             const assignResult = await octokit.request("PUT /repos/{org}/{repo}/collaborators/{username}", {
