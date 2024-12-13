@@ -46,7 +46,6 @@ export async function POST(request) {
     else if (Object.hasOwn(bodyObj, "event")) {
        //Now create the repo on github
         try {
-            return new Response("stop")
             var eventData = bodyObj["event"]["columnValues"];
             console.log(eventData);
             console.log(eventData['multi_select5__1']['chosenValues'])
@@ -70,6 +69,7 @@ export async function POST(request) {
                 org: ce_org,
                 repo: data.name,
                 username: username,
+                permission: "admin",
                 headers: {
                     "x-github-api-version": "2022-11-28",
                     "Accept": "application/vnd.github+json"
