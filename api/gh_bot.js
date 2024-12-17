@@ -140,7 +140,7 @@ export async function POST(request) {
                 console.log(assignResult)
 
                 //Apply custom properties to the repo
-                let customProps = [{ "property_name": "Technology", "value": eventData['multi_select5__1']['chosenValues'].map((prop) => prop.name)},
+                let customProps = [{ "property_name": "Technology", "value": eventData['multi_select5__1']['chosenValues'].map((prop) => prop.name).toString()},
                                     { "property_name": "Industry", "value": eventData["single_select__1"]["label"]["text"]},
                                     { "property_name": "Title", "value":eventData["short_text1__1"]["value"]}];
                 console.log(customProps);
