@@ -58,7 +58,6 @@ export async function POST(request) {
     }
     else if (Object.hasOwn(bodyObj, "event")) {
        //Now create the repo on github
-       return new Response("kill")
         try {
             var eventData = bodyObj["event"]["columnValues"];
             console.log(eventData);
