@@ -106,7 +106,7 @@ export async function POST(request) {
             } catch (error) {
                 if (error.response.status != 422) { //if it is failing for any reason other than that a repo already exists
                     console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
-                    return new Response("Error creating repo", {status: 401});
+                    return new Response("Error adding collaborator", {status: 401});
                 }
             }
 
@@ -128,7 +128,7 @@ export async function POST(request) {
                 console.log(propResult)
             } catch (error) {
                 console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
-                return new Response("Error creating repo", {status: 401});
+                return new Response("Error adding custom properties", {status: 401});
             }
         } else {
             try {
@@ -168,7 +168,7 @@ export async function POST(request) {
                 console.log(assignResult)
             } catch (error) {
                 console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
-                return new Response("Error creating repo", {status: 401});
+                return new Response("Error adding collaborator", {status: 401});
             }   
     
             //Apply custom properties to the repo
@@ -190,9 +190,32 @@ export async function POST(request) {
                 console.log(propResult)
             } catch (error) {
                 console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
-                return new Response("Error creating repo", {status: 401});
+                return new Response("Error adding custom properties", {status: 401});
             }
-            
+
+            //now attempt to add the github token to the repo's travis build config so that it can deploy to gh pages successfully
+            const CEBOT_GH_TRAVIS_TOKEN = process.env.CEBOT_GH_TRAVIS_TOKEN;
+            const CEBOT_TRAVIS_API_KEY = process.env.CEBOT_TRAVIS_API_KEY;
+            let url = `https://v3.travis.ibm.com/api/repo/${ce_org}%2F${repoName}/env_vars`;
+            fetch(url, {
+                body: { "env_var.name": "GITHUB_TOKEN", "env_var.value": CEBOT_GH_TRAVIS_TOKEN, "env_var.public": false },
+                headers: {
+                  'dataType': 'json',
+                  'content-type': 'application/json',
+                  "Travis-API-Version": 3,
+                  "Authorization": `token ${CEBOT_TRAVIS_API_KEY}`
+                },
+                method: 'POST',
+              }).then(response => {
+                if (response.status === 200) {
+                  console.log(response.text());
+              } else {
+               throw new Error('Something went wrong on api server!');
+              }})
+              .catch(error => {
+                console.error(error);
+              });
+              
         }
 
         return new Response("Success!");
