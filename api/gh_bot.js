@@ -68,6 +68,7 @@ export async function POST(request) {
         var data = {"owner": ce_org, "name": repoName, "description": eventData["long_text0__1"]["text"], "include_all_branches": true}
         
         //check internal v external
+        //--------------------- EXTERNAL ---------------------//
         if (eventData["single_select9__1"]["label"]["text"] == "External") {
             try {
                 const result = await octokit.request("POST /repos/{org}/{template}/generate", {
@@ -131,7 +132,30 @@ export async function POST(request) {
                 console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
                 return new Response("Error adding custom properties", {status: 401});
             }
-        } else {
+
+
+            //enable github pages
+            try {
+                const pagesResult = await Octokit.request("PATCH /repos/{org}/{repo}/pages", {
+                    org: ce_org,
+                    repo: repoName,
+                    source: {
+                        branch: "gh-pages",
+                        path: "/root"
+                    },
+                    headers: {
+                        "x-github-api-version": "2022-11-28",
+                        "Accept": "application/vnd.github+json"
+                    },
+                });
+
+                console.log(pagesResult)
+            } catch (error) {
+                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                return new Response("Error enabling github pages", {status: 401});
+            }
+
+        } else {  //--------------------- INTERNAL ---------------------//
             try {
                 const result = await entOctokit.request("POST /repos/{org}/{template}/generate", {
                     org: ce_org,
@@ -192,6 +216,27 @@ export async function POST(request) {
             } catch (error) {
                 console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
                 return new Response("Error adding custom properties", {status: 401});
+            }
+
+            //enable github pages
+            try {
+                const pagesResult = await entOctokit.request("PATCH /repos/{org}/{repo}/pages", {
+                    org: ce_org,
+                    repo: repoName,
+                    source: {
+                        branch: "gh-pages",
+                        path: "/root"
+                    },
+                    headers: {
+                        "x-github-api-version": "2022-11-28",
+                        "Accept": "application/vnd.github+json"
+                    },
+                });
+
+                console.log(pagesResult)
+            } catch (error) {
+                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                return new Response("Error enabling github pages", {status: 401});
             }
 
             //now attempt to add the github token to the repo's travis build config so that it can deploy to gh pages successfully
