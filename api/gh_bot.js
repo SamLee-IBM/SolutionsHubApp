@@ -210,10 +210,11 @@ export async function POST(request) {
                 if (response.status === 200) {
                   console.log(response.text());
               } else {
+                console.log(response);
                throw new Error('Something went wrong on api server!');
               }})
               .catch(error => {
-                console.error(error);
+                return new Response("Issue sending travis information", {status: 405})
               });
 
         }
