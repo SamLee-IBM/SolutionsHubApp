@@ -82,7 +82,7 @@ export async function POST(request) {
                 console.log(result);
                 
                 //assign user to the repo
-                const username = eventData['short_text_Mjj51gLS']['value']
+                const username = eventData['short_text_mkka39g4']['value']
                 const assignResult = await octokit.request("PUT /repos/{org}/{repo}/collaborators/{username}", {
                     org: ce_org,
                     repo: repoName,
@@ -125,7 +125,7 @@ export async function POST(request) {
                 console.log(result);
                 
                 //assign user to the repo
-                const username = eventData['short_text_mkka39g4']['value']
+                const username = eventData['short_text_Mjj51gLS']['value']
                 const assignResult = await entOctokit.request("PUT /repos/{org}/{repo}/collaborators/{username}", {
                     org: ce_org,
                     repo: repoName,
