@@ -114,6 +114,7 @@ export async function POST(request) {
             let customProps = [{"property_name": "Technology", "value": eventData['multi_select5__1']['chosenValues'].map((prop) => prop.name)},
                 { "property_name": "Industry", "value": eventData["single_select__1"]["label"]["text"]},
                 { "property_name": "Title", "value":eventData["short_text1__1"]["value"]}]
+            print(customProps)
             try {
                 const propResult = await octokit.request("PATCH /repos/{org}/{repo}/properties/values", {
                     org: ce_org,
@@ -210,11 +211,8 @@ export async function POST(request) {
                   console.log(response.text());
               } else {
                 console.log(response);
-               throw new Error('Something went wrong on api server!');
-              }})
-              .catch(error => {
                 return new Response("Issue sending travis information", {status: 405})
-              });
+              }});
 
         }
 
