@@ -198,11 +198,10 @@ export async function POST(request) {
             const CEBOT_TRAVIS_API_KEY = process.env.CEBOT_TRAVIS_API_KEY;
             let url = `https://v3.travis.ibm.com/api/repo/${ce_org}%2F${repoName}/env_vars`;
             await fetch(url, {
-                body: { "env_var.name": "GITHUB_TOKEN", "env_var.value": CEBOT_GH_TRAVIS_TOKEN, "env_var.public": false },
+                body: JSON.stringify({ "env_var.name": "GITHUB_TOKEN", "env_var.value": CEBOT_GH_TRAVIS_TOKEN, "env_var.public": false }),
                 headers: {
-                  'dataType': 'json',
-                  'content-type': 'application/json',
-                  "Travis-API-Version": 3,
+                  'Content-Type': 'application/json',
+                  "Travis-API-Version": "3",
                   "Authorization": `token ${CEBOT_TRAVIS_API_KEY}`
                 },
                 method: 'POST',
