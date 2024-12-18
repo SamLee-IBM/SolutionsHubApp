@@ -82,7 +82,7 @@ export async function POST(request) {
 
                 console.log(result);
 
-            } catch {
+            } catch (error) {
                 if (error.response.status != 422) { //if it is failing for any reason other than that a repo already exists
                     console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
                     return new Response("Error creating repo", {status: 401});
@@ -103,7 +103,7 @@ export async function POST(request) {
                     },
                 });
             console.log(assignResult)
-            } catch {
+            } catch (error) {
                 if (error.response.status != 422) { //if it is failing for any reason other than that a repo already exists
                     console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
                     return new Response("Error creating repo", {status: 401});
@@ -126,7 +126,7 @@ export async function POST(request) {
                 });
 
                 console.log(propResult)
-            } catch {
+            } catch (error) {
                 console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
                 return new Response("Error creating repo", {status: 401});
             }
@@ -143,7 +143,7 @@ export async function POST(request) {
                 });
 
                 console.log(result);
-            } catch {
+            } catch (error) {
                 if (error.response.status != 422) { //if it is failing for any reason other than that a repo already exists
                     console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
                     return new Response("Error creating repo", {status: 401});
@@ -166,7 +166,7 @@ export async function POST(request) {
                 });
 
                 console.log(assignResult)
-            } catch {
+            } catch (error) {
                 console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
                 return new Response("Error creating repo", {status: 401});
             }   
@@ -188,7 +188,7 @@ export async function POST(request) {
                 });
 
                 console.log(propResult)
-            } catch {
+            } catch (error) {
                 console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
                 return new Response("Error creating repo", {status: 401});
             }
