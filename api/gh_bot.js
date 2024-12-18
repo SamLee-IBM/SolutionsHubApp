@@ -58,17 +58,18 @@ export async function POST(request) {
     }
     else if (Object.hasOwn(bodyObj, "event")) {
        //Now create the repo on github
-        try {
-            var eventData = bodyObj["event"]["columnValues"];
-            console.log(eventData);
-            console.log(eventData['multi_select5__1']['chosenValues'])
-            //create the repo
-            const repoName = eventData["short_text1__1"]["value"].replaceAll(" ", "-");
-            var ce_org = "ibm-client-engineering";
-            var data = {"owner": ce_org, "name": repoName, "description": eventData["long_text0__1"]["text"], "include_all_branches": true}
-            
-            //check internal v external
-            if (eventData["single_select9__1"]["label"]["text"] == "External") {
+        
+        var eventData = bodyObj["event"]["columnValues"];
+        console.log(eventData);
+        console.log(eventData['multi_select5__1']['chosenValues'])
+        //create the repo
+        const repoName = eventData["short_text1__1"]["value"].replaceAll(" ", "-");
+        var ce_org = "ibm-client-engineering";
+        var data = {"owner": ce_org, "name": repoName, "description": eventData["long_text0__1"]["text"], "include_all_branches": true}
+        
+        //check internal v external
+        if (eventData["single_select9__1"]["label"]["text"] == "External") {
+            try {
                 const result = await octokit.request("POST /repos/{org}/{template}/generate", {
                     org: ce_org,
                     template: "solution-template-quarto",
@@ -80,9 +81,17 @@ export async function POST(request) {
                 });
 
                 console.log(result);
-                
-                //assign user to the repo
-                const username = eventData['short_text_mkka39g4']['value']
+
+            } catch {
+                if (error.response.status != 422) { //if it is failing for any reason other than that a repo already exists
+                    console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                    return new Response("Error creating repo", {status: 401});
+                }
+            }
+               
+            //assign user to the repo
+            const username = eventData['short_text_mkka39g4']['value']
+            try {
                 const assignResult = await octokit.request("PUT /repos/{org}/{repo}/collaborators/{username}", {
                     org: ce_org,
                     repo: repoName,
@@ -93,13 +102,19 @@ export async function POST(request) {
                         "Accept": "application/vnd.github+json"
                     },
                 });
+            console.log(assignResult)
+            } catch {
+                if (error.response.status != 422) { //if it is failing for any reason other than that a repo already exists
+                    console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                    return new Response("Error creating repo", {status: 401});
+                }
+            }
 
-                console.log(assignResult)
-
-                //Apply custom properties to the repo
-                let customProps = [{"property_name": "Technology", "value": eventData['multi_select5__1']['chosenValues'].map((prop) => prop.name)},
-                    { "property_name": "Industry", "value": eventData["single_select__1"]["label"]["text"]},
-                    { "property_name": "Title", "value":eventData["short_text1__1"]["value"]}]
+            //Apply custom properties to the repo
+            let customProps = [{"property_name": "Technology", "value": eventData['multi_select5__1']['chosenValues'].map((prop) => prop.name)},
+                { "property_name": "Industry", "value": eventData["single_select__1"]["label"]["text"]},
+                { "property_name": "Title", "value":eventData["short_text1__1"]["value"]}]
+            try {
                 const propResult = await octokit.request("PATCH /repos/{org}/{repo}/properties/values", {
                     org: ce_org,
                     repo: repoName,
@@ -111,7 +126,12 @@ export async function POST(request) {
                 });
 
                 console.log(propResult)
-            } else {
+            } catch {
+                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                return new Response("Error creating repo", {status: 401});
+            }
+        } else {
+            try {
                 const result = await entOctokit.request("POST /repos/{org}/{template}/generate", {
                     org: ce_org,
                     template: "solution-template-quarto",
@@ -123,9 +143,17 @@ export async function POST(request) {
                 });
 
                 console.log(result);
-                
-                //assign user to the repo
-                const username = eventData['short_text_Mjj51gLS']['value']
+            } catch {
+                if (error.response.status != 422) { //if it is failing for any reason other than that a repo already exists
+                    console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                    return new Response("Error creating repo", {status: 401});
+                }
+            }
+            
+            //assign user to the repo
+            const username = eventData['short_text_Mjj51gLS']['value']
+
+            try {
                 const assignResult = await entOctokit.request("PUT /repos/{org}/{repo}/collaborators/{username}", {
                     org: ce_org,
                     repo: repoName,
@@ -138,12 +166,17 @@ export async function POST(request) {
                 });
 
                 console.log(assignResult)
+            } catch {
+                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                return new Response("Error creating repo", {status: 401});
+            }   
+    
+            //Apply custom properties to the repo
+            let customProps = [{ "property_name": "Technology", "value": eventData['multi_select5__1']['chosenValues'].map((prop) => prop.name).toString()},
+                                { "property_name": "Industry", "value": eventData["single_select__1"]["label"]["text"]},
+                                { "property_name": "Title", "value":eventData["short_text1__1"]["value"]}];
 
-                //Apply custom properties to the repo
-                let customProps = [{ "property_name": "Technology", "value": eventData['multi_select5__1']['chosenValues'].map((prop) => prop.name).toString()},
-                                    { "property_name": "Industry", "value": eventData["single_select__1"]["label"]["text"]},
-                                    { "property_name": "Title", "value":eventData["short_text1__1"]["value"]}];
-                console.log(customProps);
+            try {
                 const propResult = await entOctokit.request("PATCH /repos/{org}/{repo}/properties/values", {
                     org: ce_org,
                     repo: repoName,
@@ -155,15 +188,11 @@ export async function POST(request) {
                 });
 
                 console.log(propResult)
+            } catch {
+                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                return new Response("Error creating repo", {status: 401});
             }
             
-            } catch (error) {
-                if (error.response) {
-                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
-            }
-            console.error(error);
-
-            return new Response("Error creating repo", {status: 401});
         }
 
         return new Response("Success!");
