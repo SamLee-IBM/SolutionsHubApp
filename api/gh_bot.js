@@ -50,7 +50,7 @@ export async function POST(request) {
     var body = Buffer.concat(chunks).toString();
     const bodyObj = JSON.parse(body);
     console.log(bodyObj)
-    
+    return new Response("Kill")
 
     if (Object.hasOwn(bodyObj, "challenge")) {
         
