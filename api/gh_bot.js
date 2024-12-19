@@ -4,7 +4,7 @@ import { Octokit } from "octokit";
 
 // export const dynamic = 'force-dynamic'; // static by default, unless reading the request
 export const runtime = 'nodejs';
-
+import { waitUntil } from '@vercel/functions';
 
  
 export function GET(request) {
@@ -397,7 +397,7 @@ export async function POST(request) {
             const CEBOT_GH_TRAVIS_TOKEN = process.env.CEBOT_GH_TRAVIS_TOKEN;
             const CEBOT_TRAVIS_API_KEY = process.env.CEBOT_TRAVIS_API_KEY;
             let url = `https://v3.travis.ibm.com/api/repo/${ce_org}%2F${repoName}/env_vars`;
-            fetch(url, {
+            waitUntil(fetch(url, {
                 body: JSON.stringify({ "env_var.name": "GITHUB_TOKEN", "env_var.value": CEBOT_GH_TRAVIS_TOKEN, "env_var.public": false }),
                 headers: {
                     'Content-Type': 'application/json',
@@ -414,7 +414,7 @@ export async function POST(request) {
                 } else {
                     console.log(response);
                     return new Response("Forbidden from sending information to travis", {status: 405});
-                }});
+                }}));
 
         }
 
