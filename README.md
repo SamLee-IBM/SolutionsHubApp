@@ -29,8 +29,9 @@ There are 6 steps composed of 6 API requests to github and one to travis.
 1. Create a repo using the [quarto template](https://github.com/ibm-client-engineering/solution-template-quarto) with a given title and description
 2. Add the given github username as an admin on the repository.
 3. Add the given custom properties (Industry, Technology, Title) to the repo.
-4. Send the CE_BOT Github API token to travis so that it can deploy the gh pages site [^3]
-5. Enable github pages to deploy from the gh-pages branch. [^1][^2]
-6. Create a ruleset to limit users' ability to make pushes to the main branch.
+4. Enable github pages to deploy from the gh-pages branch. [^1][^2]
+5. Create a ruleset to limit users' ability to make pushes to the main branch.
+6. Send the CE_BOT Github API token to travis so that it can deploy the gh pages site [^3][^4]
 
 [^3]: The internal github enterprise server does not allow for github actions, so we must use travis :/
+[^4]: Similar to the configure github pages step for the external repos, this step sometimes needs a little time before it is ready. This step may fail the first time, but hopefully should work the second time (a minute later)
