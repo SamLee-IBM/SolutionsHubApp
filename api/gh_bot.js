@@ -378,13 +378,14 @@ export async function POST(request) {
                             type: "non_fast_forward"
                         },
                         {
-                            type: "deletion",
+                            type: "deletion"
+
+                        },
+                        {
+                            type: "update",
                             parameters: {
                                 update_allows_fetch_and_merge: true
                             }
-                        },
-                        {
-                            type: "update"
                         },
                         {
                             type: "pull_request",
@@ -393,12 +394,7 @@ export async function POST(request) {
                                 dismiss_stale_reviews_on_push: true,
                                 require_code_owner_review: true,
                                 require_last_push_approval: true,
-                                required_review_thread_resolution: false,
-                                allowed_merge_methods: [
-                                    "merge",
-                                    "squash",
-                                    "rebase"
-                                ]
+                                required_review_thread_resolution: false
                             },
                         }
                     ],
