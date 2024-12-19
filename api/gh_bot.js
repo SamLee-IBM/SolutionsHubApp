@@ -155,6 +155,57 @@ export async function POST(request) {
                 return new Response("Error enabling github pages", {status: 401});
             }
 
+            //add main branch protection rule
+            try {
+
+                await octokit.request('POST /repos/{owner}/{repo}/rulesets', {
+                    owner: ce_org,
+                    repo: repoName,
+                    name: 'Main Branch Protection',
+                    target: 'branch',
+                    enforcement: 'active',
+                    bypass_actors: [
+                      {
+                        actor_id: 5, //admin
+                        actor_type: 'RepositoryRole',
+                      },
+                      {
+                        actor_id: 1, //admin
+                        actor_type: 'OrganizationAdmin',
+                      },
+                    ],
+                    conditions: {
+                      ref_name: {
+                        include: [
+                          'refs/heads/main',
+                          '~DEFAULT_BRANCH'
+                        ]
+                      }
+                    },
+                    rules: [
+                      {
+                        type: 'pull_request',
+                        parameters: {
+                            dismiss_stale_reviews_on_push: true,
+                            require_code_owner_review: true,
+                            require_last_push_approval: true,
+                            required_approving_review_count: 1,
+                            required_review_thread_resolution: false
+
+                        }
+                      }
+                    ],
+                    headers: {
+                      'X-GitHub-Api-Version': '2022-11-28'
+                    }
+                  })
+            } catch(error) {
+                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                return new Response("Error enabling github pages", {status: 401});
+            }
+
+
+
         } else {  //--------------------- INTERNAL ---------------------//
             try {
                 const result = await entOctokit.request("POST /repos/{org}/{template}/generate", {
@@ -239,6 +290,7 @@ export async function POST(request) {
                 return new Response("Error enabling github pages", {status: 401});
             }
 
+
             //now attempt to add the github token to the repo's travis build config so that it can deploy to gh pages successfully
             const CEBOT_GH_TRAVIS_TOKEN = process.env.CEBOT_GH_TRAVIS_TOKEN;
             const CEBOT_TRAVIS_API_KEY = process.env.CEBOT_TRAVIS_API_KEY;
@@ -258,6 +310,56 @@ export async function POST(request) {
                 console.log(response);
                 return new Response("Issue sending travis information", {status: 405})
               }});
+
+
+               //add main branch protection rule
+            try {
+
+                await entOctokit.request('POST /repos/{owner}/{repo}/rulesets', {
+                    owner: ce_org,
+                    repo: repoName,
+                    name: 'Main Branch Protection',
+                    target: 'branch',
+                    enforcement: 'active',
+                    bypass_actors: [
+                      {
+                        actor_id: 5, //admin
+                        actor_type: 'RepositoryRole',
+                      },
+                      {
+                        actor_id: 1, //admin
+                        actor_type: 'OrganizationAdmin',
+                      },
+                    ],
+                    conditions: {
+                      ref_name: {
+                        include: [
+                          'refs/heads/main',
+                          '~DEFAULT_BRANCH'
+                        ]
+                      }
+                    },
+                    rules: [
+                      {
+                        type: 'pull_request',
+                        parameters: {
+                            dismiss_stale_reviews_on_push: true,
+                            require_code_owner_review: true,
+                            require_last_push_approval: true,
+                            required_approving_review_count: 1,
+                            required_review_thread_resolution: false
+
+                        }
+                      }
+                    ],
+                    headers: {
+                      'X-GitHub-Api-Version': '2022-11-28'
+                    }
+                  })
+            } catch(error) {
+                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                return new Response("Error enabling github pages", {status: 401});
+            }
 
         }
 
