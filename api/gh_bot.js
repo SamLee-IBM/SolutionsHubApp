@@ -346,8 +346,7 @@ export async function POST(request) {
 
                //add main branch protection rule
             try {
-
-                await entOctokit.request('POST /repos/{owner}/{repo}/rulesets', {
+                const ruleResult = await entOctokit.request('POST /repos/{owner}/{repo}/rulesets', {
                     owner: ce_org,
                     repo: repoName,
                     name: 'Main Branch Protection',
@@ -403,6 +402,7 @@ export async function POST(request) {
                       "Accept": "application/vnd.github+json"
                     }
                   })
+                console.log(ruleResult)
             } catch(error) {
                 console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
                 return new Response("Error enabling github pages", {status: 401});
