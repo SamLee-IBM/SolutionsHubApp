@@ -320,27 +320,6 @@ export async function POST(request) {
                 return new Response("Error adding custom properties", {status: 401});
             }
 
-            //enable github pages
-            try {
-                const pagesResult = await entOctokit.request("POST /repos/{org}/{repo}/pages", {
-                    org: ce_org,
-                    repo: repoName,
-                    source: {
-                        branch: "gh-pages",
-                        path: "/"
-                    },
-                    headers: {
-                        "x-github-api-version": "2022-11-28",
-                        "Accept": "application/vnd.github+json"
-                    },
-                });
-
-                console.log(pagesResult)
-            } catch (error) {
-                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
-                return new Response("Error enabling github pages", {status: 401});
-            }
-
 
             //now attempt to add the github token to the repo's travis build config so that it can deploy to gh pages successfully
             const CEBOT_GH_TRAVIS_TOKEN = process.env.CEBOT_GH_TRAVIS_TOKEN;
@@ -349,18 +328,56 @@ export async function POST(request) {
             await fetch(url, {
                 body: JSON.stringify({ "env_var.name": "GITHUB_TOKEN", "env_var.value": CEBOT_GH_TRAVIS_TOKEN, "env_var.public": false }),
                 headers: {
-                  'Content-Type': 'application/json',
-                  "Travis-API-Version": "3",
-                  "Authorization": `token ${CEBOT_TRAVIS_API_KEY}`
+                    'Content-Type': 'application/json',
+                    "Travis-API-Version": "3",
+                    "Authorization": `token ${CEBOT_TRAVIS_API_KEY}`
                 },
                 method: 'POST',
-              }).then(response => {
+                }).then(response => {
                 if (response.status === 200) {
-                  console.log(response.text());
-              } else {
+                    console.log(response.text());
+                } else {
                 console.log(response);
                 return new Response("Issue sending travis information", {status: 405})
-              }});
+                }});
+
+            //enable github pages
+            try {
+                //check if pages is already configured
+                const pagesCheckResult = await entOctokit.request("GET /repos/{org}/{repo}/pages", {
+                    org: ce_org,
+                    repo: repoName,
+                    headers: {
+                        "x-github-api-version": "2022-11-28"
+                    },
+                });
+                console.log(pagesCheckResult)
+            } catch(error) {
+                //now we need to update the deployment
+                try {
+                    const pagesResult = await entOctokit.request("POST /repos/{org}/{repo}/pages", {
+                        org: ce_org,
+                        repo: repoName,
+                        source: {
+                            branch: "gh-pages",
+                            path: "/"
+                        },
+                        headers: {
+                            "x-github-api-version": "2022-11-28",
+                            "Accept": "application/vnd.github+json"
+                        },
+                    });
+    
+                    console.log(pagesResult)
+                } catch (error) {
+                    console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                    return new Response("Error enabling github pages", {status: 401});
+                }
+                
+            }
+
+
+
 
 
                //add main branch protection rule
