@@ -141,7 +141,7 @@ export async function POST(request) {
                     repo: repoName,
                     source: {
                         branch: "gh-pages",
-                        path: "/root"
+                        path: "/"
                     },
                     headers: {
                         "x-github-api-version": "2022-11-28",
@@ -278,7 +278,7 @@ export async function POST(request) {
                     repo: repoName,
                     source: {
                         branch: "gh-pages",
-                        path: "/root"
+                        path: "/"
                     },
                     headers: {
                         "x-github-api-version": "2022-11-28",
