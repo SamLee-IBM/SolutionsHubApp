@@ -409,12 +409,12 @@ export async function POST(request) {
                     console.log(response.status)
                     if (response.status === 403) {
                         console.log(response);
-                        console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                        console.error(`Error communicating with travis (forbidden) Status: ${response.status}`)
                     } else if (response.status === 201) {
                         console.log(response);
                     } else {
                         console.log(response);
-                        console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                        console.error(`Error (unclear why)! Status: ${response.status}`)
                 }}));
 
         }
