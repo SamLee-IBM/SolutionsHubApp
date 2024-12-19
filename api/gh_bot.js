@@ -157,58 +157,61 @@ export async function POST(request) {
 
             //add main branch protection rule
             try {
-                console.log("trying to get branch protection rule");
-                const ruleResult = await octokit.request('GET /repos/{owner}/{repo}/rules/branches/{branch}', {
+                console.log("trying to create branch protection rule");
+                const ruleResult = await octokit.request('POST /repos/{owner}/{repo}/rulesets', {
                     owner: ce_org,
                     repo: repoName,
-                    branch: 'main',
+                    name: 'Main Branch Protection',
+                    target: 'branch',
+                    enforcement: 'active',
+                    bypass_actors: [
+                      {
+                        actor_id: 5, //admin
+                        actor_type: 'RepositoryRole',
+                        bypass_mode: 'always'
+                      },
+                      {
+                        actor_id: 1, //admin
+                        actor_type: 'OrganizationAdmin',
+                        bypass_mode: 'always'
+                      },
+                    ],
+                    conditions: {
+                      ref_name: {
+                        include: [
+                          '~DEFAULT_BRANCH'
+                        ]
+                      }
+                    },
+                    rules: [
+                        {
+                            "type": "non_fast_forward"
+                        },
+                        {
+                            "type": "deletion"
+                        },
+                        {
+                            "type": "pull_request",
+                            "parameters": {
+                                "required_approving_review_count": 1,
+                                "dismiss_stale_reviews_on_push": true,
+                                "require_code_owner_review": true,
+                                "require_last_push_approval": true,
+                                "required_review_thread_resolution": false,
+                                "automatic_copilot_code_review_enabled": false,
+                                "allowed_merge_methods": [
+                                    "merge",
+                                    "squash",
+                                    "rebase"
+                                ]
+                            },
+                        }
+                    ],
                     headers: {
-                      'X-GitHub-Api-Version': '2022-11-28'
+                      'X-GitHub-Api-Version': '2022-11-28',
+                      "Accept": "application/vnd.github+json"
                     }
                   });
-                // const ruleResult = await octokit.request('POST /repos/{owner}/{repo}/rulesets', {
-                //     owner: ce_org,
-                //     repo: repoName,
-                //     name: 'Main Branch Protection',
-                //     target: 'branch',
-                //     enforcement: 'active',
-                //     bypass_actors: [
-                //     //   {
-                //     //     actor_id: 5, //admin
-                //     //     actor_type: 'RepositoryRole',
-                //     //     bypass_mode: 'always'
-                //     //   },
-                //       {
-                //         actor_id: 1, //admin
-                //         actor_type: 'OrganizationAdmin',
-                //         bypass_mode: 'always'
-                //       },
-                //     ],
-                //     conditions: {
-                //       ref_name: {
-                //         include: [
-                //           'refs/heads/main'
-                //         ]
-                //       }
-                //     },
-                //     rules: [
-                //       {
-                //         type: 'pull_request',
-                //         parameters: {
-                //             dismiss_stale_reviews_on_push: true,
-                //             require_code_owner_review: true,
-                //             require_last_push_approval: true,
-                //             required_approving_review_count: 1,
-                //             required_review_thread_resolution: false
-
-                //         }
-                //       }
-                //     ],
-                //     headers: {
-                //       'X-GitHub-Api-Version': '2022-11-28',
-                //       "Accept": "application/vnd.github+json"
-                //     }
-                //   });
 
                 console.log(ruleResult);
             } catch(error) {
