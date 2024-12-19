@@ -157,6 +157,7 @@ export async function POST(request) {
 
             //add main branch protection rule
             try {
+                console.log("trying to get branch protection rule");
                 const ruleResult = await octokit.request('GET /repos/{owner}/{repo}/rules/branches/{branch}', {
                     owner: ce_org,
                     repo: repoName,
@@ -164,7 +165,7 @@ export async function POST(request) {
                     headers: {
                       'X-GitHub-Api-Version': '2022-11-28'
                     }
-                  })
+                  });
                 // const ruleResult = await octokit.request('POST /repos/{owner}/{repo}/rulesets', {
                 //     owner: ce_org,
                 //     repo: repoName,
