@@ -179,8 +179,7 @@ export async function POST(request) {
                     conditions: {
                       ref_name: {
                         include: [
-                          'refs/heads/main',
-                          '~DEFAULT_BRANCH'
+                          'refs/heads/main'
                         ]
                       }
                     },
