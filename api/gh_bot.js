@@ -66,7 +66,7 @@ export async function POST(request) {
         const repoName = eventData["short_text1__1"]["value"].replaceAll(" ", "-");
         var ce_org = "ibm-client-engineering";
         var data = {"owner": ce_org, "name": repoName, "description": eventData["long_text0__1"]["text"], "include_all_branches": true}
-        
+        return new Response("Kill")
         //check internal v external
         //--------------------- EXTERNAL ---------------------//
         if (eventData["single_select9__1"]["label"]["text"] == "External") {
@@ -136,6 +136,21 @@ export async function POST(request) {
 
             //enable github pages
             try {
+                //check if pages is already configured
+
+                const pagesCheckResult = await octokit.request("GET /repos/{org}/{repo}/pages", {
+                    org: ce_org,
+                    repo: repoName,
+                    headers: {
+                        "x-github-api-version": "2022-11-28"
+                    },
+                });
+            } catch(error) {
+                //now we need to update the deployment
+
+            }
+
+
                 const pagesResult = await octokit.request("POST /repos/{org}/{repo}/pages", {
                     org: ce_org,
                     repo: repoName,
