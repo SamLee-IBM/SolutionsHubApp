@@ -325,7 +325,7 @@ export async function POST(request) {
             const CEBOT_GH_TRAVIS_TOKEN = process.env.CEBOT_GH_TRAVIS_TOKEN;
             const CEBOT_TRAVIS_API_KEY = process.env.CEBOT_TRAVIS_API_KEY;
             let url = `https://v3.travis.ibm.com/api/repo/${ce_org}%2F${repoName}/env_vars`;
-            await fetch(url, {
+            setTimeout(() => fetch(url, {
                 body: JSON.stringify({ "env_var.name": "GITHUB_TOKEN", "env_var.value": CEBOT_GH_TRAVIS_TOKEN, "env_var.public": false }),
                 headers: {
                     'Content-Type': 'application/json',
@@ -334,12 +334,15 @@ export async function POST(request) {
                 },
                 method: 'POST',
                 }).then(response => {
-                if (response.status === 200) {
+                if (response.status === 403) {
+                    console.log(response.text());
+                    return new Response("Forbidden from sending information to travis", {status: 403});
+                } else if (response.status === 201) {
                     console.log(response.text());
                 } else {
-                console.log(response);
-                return new Response("Issue sending travis information", {status: 405})
-                }});
+                    console.log(response);
+                    return new Response("Forbidden from sending information to travis", {status: 405});
+                }}), 2000);
 
 
 
