@@ -136,7 +136,7 @@ export async function POST(request) {
 
             //enable github pages
             try {
-                const pagesResult = await octokit.request("PATCH /repos/{org}/{repo}/pages", {
+                const pagesResult = await octokit.request("POST /repos/{org}/{repo}/pages", {
                     org: ce_org,
                     repo: repoName,
                     source: {
@@ -273,7 +273,7 @@ export async function POST(request) {
 
             //enable github pages
             try {
-                const pagesResult = await entOctokit.request("PATCH /repos/{org}/{repo}/pages", {
+                const pagesResult = await entOctokit.request("POST /repos/{org}/{repo}/pages", {
                     org: ce_org,
                     repo: repoName,
                     source: {
