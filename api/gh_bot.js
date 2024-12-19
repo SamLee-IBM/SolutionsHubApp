@@ -165,11 +165,11 @@ export async function POST(request) {
                     target: 'branch',
                     enforcement: 'active',
                     bypass_actors: [
-                      {
-                        actor_id: 5, //admin
-                        actor_type: 'RepositoryRole',
-                        bypass_mode: 'always'
-                      },
+                    //   {
+                    //     actor_id: 5, //admin
+                    //     actor_type: 'RepositoryRole',
+                    //     bypass_mode: 'always'
+                    //   },
                       {
                         actor_id: 1, //admin
                         actor_type: 'OrganizationAdmin',
@@ -197,7 +197,8 @@ export async function POST(request) {
                       }
                     ],
                     headers: {
-                      'X-GitHub-Api-Version': '2022-11-28'
+                      'X-GitHub-Api-Version': '2022-11-28',
+                      "Accept": "application/vnd.github+json"
                     }
                   });
 
@@ -325,11 +326,11 @@ export async function POST(request) {
                     target: 'branch',
                     enforcement: 'active',
                     bypass_actors: [
-                      {
-                        actor_id: 5, //admin
-                        actor_type: 'RepositoryRole',
-                        bypass_mode: 'always'
-                      },
+                    //   {
+                    //     actor_id: 5, //admin
+                    //     actor_type: 'RepositoryRole',
+                    //     bypass_mode: 'always'
+                    //   },
                       {
                         actor_id: 1, //admin
                         actor_type: 'OrganizationAdmin',
@@ -339,8 +340,7 @@ export async function POST(request) {
                     conditions: {
                       ref_name: {
                         include: [
-                          'refs/heads/main',
-                          '~DEFAULT_BRANCH'
+                          'refs/heads/main'
                         ]
                       }
                     },
@@ -358,7 +358,8 @@ export async function POST(request) {
                       }
                     ],
                     headers: {
-                      'X-GitHub-Api-Version': '2022-11-28'
+                      'X-GitHub-Api-Version': '2022-11-28',
+                      "Accept": "application/vnd.github+json"
                     }
                   })
             } catch(error) {
