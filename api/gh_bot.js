@@ -180,26 +180,30 @@ export async function POST(request) {
                       ref_name: {
                         include: [
                           '~DEFAULT_BRANCH'
-                        ]
+                        ],
+                        exclude: []
                       }
                     },
                     rules: [
                         {
-                            "type": "non_fast_forward"
+                            type: "non_fast_forward"
                         },
                         {
-                            "type": "deletion"
+                            type: "deletion"
                         },
                         {
-                            "type": "pull_request",
-                            "parameters": {
-                                "required_approving_review_count": 1,
-                                "dismiss_stale_reviews_on_push": true,
-                                "require_code_owner_review": true,
-                                "require_last_push_approval": true,
-                                "required_review_thread_resolution": false,
-                                "automatic_copilot_code_review_enabled": false,
-                                "allowed_merge_methods": [
+                            type: "update"
+                        },
+                        {
+                            type: "pull_request",
+                            parameters: {
+                                required_approving_review_count: 1,
+                                dismiss_stale_reviews_on_push: true,
+                                require_code_owner_review: true,
+                                require_last_push_approval: true,
+                                required_review_thread_resolution: false,
+                                automatic_copilot_code_review_enabled: false,
+                                allowed_merge_methods: [
                                     "merge",
                                     "squash",
                                     "rebase"
