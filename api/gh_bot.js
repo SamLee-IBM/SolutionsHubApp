@@ -341,42 +341,6 @@ export async function POST(request) {
                 return new Response("Issue sending travis information", {status: 405})
                 }});
 
-            //enable github pages
-            try {
-                //check if pages is already configured
-                const pagesCheckResult = await entOctokit.request("GET /repos/{org}/{repo}/pages", {
-                    org: ce_org,
-                    repo: repoName,
-                    headers: {
-                        "x-github-api-version": "2022-11-28"
-                    },
-                });
-                console.log(pagesCheckResult)
-            } catch(error) {
-                //now we need to update the deployment
-                try {
-                    const pagesResult = await entOctokit.request("POST /repos/{org}/{repo}/pages", {
-                        org: ce_org,
-                        repo: repoName,
-                        source: {
-                            branch: "gh-pages",
-                            path: "/"
-                        },
-                        headers: {
-                            "x-github-api-version": "2022-11-28",
-                            "Accept": "application/vnd.github+json"
-                        },
-                    });
-    
-                    console.log(pagesResult)
-                } catch (error) {
-                    console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
-                    return new Response("Error enabling github pages", {status: 401});
-                }
-                
-            }
-
-
 
 
 
@@ -414,7 +378,10 @@ export async function POST(request) {
                             type: "non_fast_forward"
                         },
                         {
-                            type: "deletion"
+                            type: "deletion",
+                            parameters: {
+                                update_allows_fetch_and_merge: true
+                            }
                         },
                         {
                             type: "update"
@@ -427,7 +394,6 @@ export async function POST(request) {
                                 require_code_owner_review: true,
                                 require_last_push_approval: true,
                                 required_review_thread_resolution: false,
-                                automatic_copilot_code_review_enabled: false,
                                 allowed_merge_methods: [
                                     "merge",
                                     "squash",
