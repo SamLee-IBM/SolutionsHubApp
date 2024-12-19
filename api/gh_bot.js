@@ -66,7 +66,6 @@ export async function POST(request) {
         const repoName = eventData["short_text1__1"]["value"].replaceAll(" ", "-");
         var ce_org = "ibm-client-engineering";
         var data = {"owner": ce_org, "name": repoName, "description": eventData["long_text0__1"]["text"], "include_all_branches": true}
-        return new Response("Kill")
         //check internal v external
         //--------------------- EXTERNAL ---------------------//
         if (eventData["single_select9__1"]["label"]["text"] == "External") {
@@ -137,7 +136,6 @@ export async function POST(request) {
             //enable github pages
             try {
                 //check if pages is already configured
-
                 const pagesCheckResult = await octokit.request("GET /repos/{org}/{repo}/pages", {
                     org: ce_org,
                     repo: repoName,
@@ -145,30 +143,33 @@ export async function POST(request) {
                         "x-github-api-version": "2022-11-28"
                     },
                 });
+                console.log(pagesCheckResult)
             } catch(error) {
                 //now we need to update the deployment
-
+                try {
+                    const pagesResult = await octokit.request("POST /repos/{org}/{repo}/pages", {
+                        org: ce_org,
+                        repo: repoName,
+                        source: {
+                            branch: "gh-pages",
+                            path: "/"
+                        },
+                        headers: {
+                            "x-github-api-version": "2022-11-28",
+                            "Accept": "application/vnd.github+json"
+                        },
+                    });
+    
+                    console.log(pagesResult)
+                } catch (error) {
+                    console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                    return new Response("Error enabling github pages", {status: 401});
+                }
+                
             }
 
 
-                const pagesResult = await octokit.request("POST /repos/{org}/{repo}/pages", {
-                    org: ce_org,
-                    repo: repoName,
-                    source: {
-                        branch: "gh-pages",
-                        path: "/"
-                    },
-                    headers: {
-                        "x-github-api-version": "2022-11-28",
-                        "Accept": "application/vnd.github+json"
-                    },
-                });
-
-                console.log(pagesResult)
-            } catch (error) {
-                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
-                return new Response("Error enabling github pages", {status: 401});
-            }
+                
 
             //add main branch protection rule
             try {
