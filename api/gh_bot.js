@@ -406,14 +406,15 @@ export async function POST(request) {
                 },
                 method: 'POST',
                 }).then((response) => {
-                if (response.status === 403) {
-                    console.log(response);
-                    return new Response("Forbidden from sending information to travis", {status: 403});
-                } else if (response.status === 201) {
-                    console.log(response);
-                } else {
-                    console.log(response);
-                    return new Response("Forbidden from sending information to travis", {status: 405});
+                    console.log(response.status)
+                    if (response.status === 403) {
+                        console.log(response);
+                        return new Response("Forbidden from sending information to travis", {status: 403});
+                    } else if (response.status === 201) {
+                        console.log(response);
+                    } else {
+                        console.log(response);
+                        return new Response("Forbidden from sending information to travis", {status: 405});
                 }}));
 
         }
