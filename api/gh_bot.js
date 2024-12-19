@@ -333,16 +333,16 @@ export async function POST(request) {
                     "Authorization": `token ${CEBOT_TRAVIS_API_KEY}`
                 },
                 method: 'POST',
-                }).then(response => {
+                }).then((response) => {
                 if (response.status === 403) {
                     console.log(response.text());
                     return new Response("Forbidden from sending information to travis", {status: 403});
                 } else if (response.status === 201) {
-                    console.log(response.text());
+                    console.log(response);
                 } else {
                     console.log(response);
                     return new Response("Forbidden from sending information to travis", {status: 405});
-                }}), 2000);
+                }}), 6000);
 
 
 
