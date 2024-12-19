@@ -65,7 +65,7 @@ export async function POST(request) {
         //create the repo
         const repoName = eventData["short_text1__1"]["value"].replaceAll(" ", "-");
         var ce_org = "ibm-client-engineering";
-        var data = {"owner": ce_org, "name": repoName, "description": eventData["long_text0__1"]["text"], "include_all_branches": true}
+        var data = {"owner": ce_org, "name": repoName, "description": eventData["long_text0__1"]["text"], "include_all_branches": false}
         //check internal v external
         //--------------------- EXTERNAL ---------------------//
         if (eventData["single_select9__1"]["label"]["text"] == "External") {
@@ -132,6 +132,22 @@ export async function POST(request) {
                 return new Response("Error adding custom properties", {status: 401});
             }
 
+            try {
+                //trigger the action to create the gh-pages branch
+                const branchCreateResult = await octokit.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
+                    owner: ce_org,
+                    repo: repoName,
+                    workflow_id: 'create_branch.yml',
+                    ref: 'main',
+                    headers: {
+                    'X-GitHub-Api-Version': '2022-11-28'
+                    }
+                });
+                console.log(branchCreateResult);
+            } catch(error) {
+                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                return new Response("Error creating gh-pages branch", {status: 401});
+            }
 
             //enable github pages
             try {
@@ -357,11 +373,11 @@ export async function POST(request) {
                     target: 'branch',
                     enforcement: 'active',
                     bypass_actors: [
-                    //   {
-                    //     actor_id: 5, //admin
-                    //     actor_type: 'RepositoryRole',
-                    //     bypass_mode: 'always'
-                    //   },
+                      {
+                        actor_id: 5, //admin
+                        actor_type: 'RepositoryRole',
+                        bypass_mode: 'always'
+                      },
                       {
                         actor_id: 1, //admin
                         actor_type: 'OrganizationAdmin',
@@ -371,22 +387,37 @@ export async function POST(request) {
                     conditions: {
                       ref_name: {
                         include: [
-                          'refs/heads/main'
-                        ]
+                          '~DEFAULT_BRANCH'
+                        ],
+                        exclude: []
                       }
                     },
                     rules: [
-                      {
-                        type: 'pull_request',
-                        parameters: {
-                            dismiss_stale_reviews_on_push: true,
-                            require_code_owner_review: true,
-                            require_last_push_approval: true,
-                            required_approving_review_count: 1,
-                            required_review_thread_resolution: false
-
+                        {
+                            type: "non_fast_forward"
+                        },
+                        {
+                            type: "deletion"
+                        },
+                        {
+                            type: "update"
+                        },
+                        {
+                            type: "pull_request",
+                            parameters: {
+                                required_approving_review_count: 1,
+                                dismiss_stale_reviews_on_push: true,
+                                require_code_owner_review: true,
+                                require_last_push_approval: true,
+                                required_review_thread_resolution: false,
+                                automatic_copilot_code_review_enabled: false,
+                                allowed_merge_methods: [
+                                    "merge",
+                                    "squash",
+                                    "rebase"
+                                ]
+                            },
                         }
-                      }
                     ],
                     headers: {
                       'X-GitHub-Api-Version': '2022-11-28',
