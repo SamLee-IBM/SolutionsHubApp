@@ -320,30 +320,6 @@ export async function POST(request) {
             }
 
 
-            //now attempt to add the github token to the repo's travis build config so that it can deploy to gh pages successfully
-            const CEBOT_GH_TRAVIS_TOKEN = process.env.CEBOT_GH_TRAVIS_TOKEN;
-            const CEBOT_TRAVIS_API_KEY = process.env.CEBOT_TRAVIS_API_KEY;
-            let url = `https://v3.travis.ibm.com/api/repo/${ce_org}%2F${repoName}/env_vars`;
-            setTimeout(() => fetch(url, {
-                body: JSON.stringify({ "env_var.name": "GITHUB_TOKEN", "env_var.value": CEBOT_GH_TRAVIS_TOKEN, "env_var.public": false }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    "Travis-API-Version": "3",
-                    "Authorization": `token ${CEBOT_TRAVIS_API_KEY}`
-                },
-                method: 'POST',
-                }).then((response) => {
-                if (response.status === 403) {
-                    console.log(response.text());
-                    return new Response("Forbidden from sending information to travis", {status: 403});
-                } else if (response.status === 201) {
-                    console.log(response);
-                } else {
-                    console.log(response);
-                    return new Response("Forbidden from sending information to travis", {status: 405});
-                }}), 6000);
-
-
 
 
                //add main branch protection rule
@@ -406,9 +382,39 @@ export async function POST(request) {
                   })
                 console.log(ruleResult)
             } catch(error) {
-                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
-                return new Response("Error enabling github pages", {status: 401});
+                if (error.response.status != 422) {
+                    console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                    return new Response("Error enabling github pages", {status: 401});
+                } else {
+                    console.log(`Error (ruleset probably already exists)! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                }
+
+                
             }
+
+
+            //now attempt to add the github token to the repo's travis build config so that it can deploy to gh pages successfully
+            const CEBOT_GH_TRAVIS_TOKEN = process.env.CEBOT_GH_TRAVIS_TOKEN;
+            const CEBOT_TRAVIS_API_KEY = process.env.CEBOT_TRAVIS_API_KEY;
+            let url = `https://v3.travis.ibm.com/api/repo/${ce_org}%2F${repoName}/env_vars`;
+            fetch(url, {
+                body: JSON.stringify({ "env_var.name": "GITHUB_TOKEN", "env_var.value": CEBOT_GH_TRAVIS_TOKEN, "env_var.public": false }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Travis-API-Version": "3",
+                    "Authorization": `token ${CEBOT_TRAVIS_API_KEY}`
+                },
+                method: 'POST',
+                }).then((response) => {
+                if (response.status === 403) {
+                    console.log(response);
+                    return new Response("Forbidden from sending information to travis", {status: 403});
+                } else if (response.status === 201) {
+                    console.log(response);
+                } else {
+                    console.log(response);
+                    return new Response("Forbidden from sending information to travis", {status: 405});
+                }});
 
         }
 
