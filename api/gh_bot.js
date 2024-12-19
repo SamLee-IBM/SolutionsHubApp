@@ -168,10 +168,12 @@ export async function POST(request) {
                       {
                         actor_id: 5, //admin
                         actor_type: 'RepositoryRole',
+                        bypass_mode: 'always'
                       },
                       {
                         actor_id: 1, //admin
                         actor_type: 'OrganizationAdmin',
+                        bypass_mode: 'always'
                       },
                     ],
                     conditions: {
@@ -327,10 +329,12 @@ export async function POST(request) {
                       {
                         actor_id: 5, //admin
                         actor_type: 'RepositoryRole',
+                        bypass_mode: 'always'
                       },
                       {
                         actor_id: 1, //admin
                         actor_type: 'OrganizationAdmin',
+                        bypass_mode: 'always'
                       },
                     ],
                     conditions: {
