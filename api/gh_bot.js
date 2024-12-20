@@ -315,8 +315,11 @@ export async function POST(request) {
 
                 console.log(propResult)
             } catch (error) {
-                console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
-                return new Response("Error adding custom properties", {status: 401});
+                if (error.response.status != 422) {
+                    console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                } else {
+                    console.log(`Error (need to update this custom property to match case)! Status: ${error.response.status}. Message: ${error.response.data.message}`)
+                }
             }
 
 
