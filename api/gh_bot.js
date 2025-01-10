@@ -113,7 +113,7 @@ export async function POST(request) {
             let customProps = [{"property_name": "Technology", "value": eventData['multi_select5__1']['chosenValues'].map((prop) => prop.name)},
                 { "property_name": "Industry", "value": eventData["single_select_mkm0qkdh"]["label"]["text"]},
                 { "property_name": "Title", "value": eventData["short_text_mkm0807n"]["value"]},
-                { "property_name": "Technology-Pillar", "value": eventData["single_select_1_mkm2cce"]["label"]["text"]}]
+                { "property_name": "Technology-Pillar", "value": [eventData["single_select_1_mkm2cce"]["label"]["text"]]}]
             console.log(customProps)
             try {
                 const propResult = await octokit.request("PATCH /repos/{org}/{repo}/properties/values", {
@@ -303,8 +303,8 @@ export async function POST(request) {
     
             //Apply custom properties to the repo
             let customProps = [{ "property_name": "Technology", "value": eventData['multi_select5__1']['chosenValues'].map((prop) => prop.name).toString()},
-                                { "property_name": "Industry", "value": eventData["single_select__1"]["label"]["text"]},
-                                { "property_name": "Title", "value":eventData["short_text1__1"]["value"]}];
+                            { "property_name": "Industry", "value": eventData["single_select_mkm0qkdh"]["label"]["text"]},
+                            { "property_name": "Title", "value": eventData["short_text_mkm0807n"]["value"]}]
 
             try {
                 const propResult = await entOctokit.request("PATCH /repos/{org}/{repo}/properties/values", {
