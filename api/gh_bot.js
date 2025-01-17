@@ -405,7 +405,7 @@ export async function POST(request) {
             const CEBOT_TRAVIS_API_KEY = process.env.CEBOT_TRAVIS_API_KEY;
             let url = `https://v3.travis.ibm.com/api/repo/${ce_org}%2F${repoName}/env_vars`;
             let error = false;
-            waitUntil(fetch(url, {
+            await fetch(url, {
                 body: JSON.stringify({ "env_var.name": "GITHUB_TOKEN", "env_var.value": CEBOT_GH_TRAVIS_TOKEN, "env_var.public": false }),
                 headers: {
                     'Content-Type': 'application/json',
@@ -418,16 +418,13 @@ export async function POST(request) {
                     if (response.status === 403) {
                         console.log(response);
                         console.error(`Error communicating with travis (forbidden) Status: ${response.status}`)
-                        error = true;
+                        return new Response("something went wrong with the travis API", {status: 403});
                     } else if (response.status === 201) {
                         console.log(response);
                     } else {
                         console.log(response);
                         console.error(`Error (unclear why)! Status: ${response.status}`)
-                }}));
-            if (error) {
-                return new Response("something went wrong with the travis API", {status: 403});
-            }
+                }});
 
         }
 
