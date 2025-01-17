@@ -417,6 +417,7 @@ export async function POST(request) {
                     if (response.status === 403) {
                         console.log(response);
                         console.error(`Error communicating with travis (forbidden) Status: ${response.status}`)
+                        return new Response("Error sending api key to travis", {status: 401});
                     } else if (response.status === 201) {
                         console.log(response);
                     } else {
