@@ -227,9 +227,6 @@ export async function POST(request) {
                             type: "deletion"
                         },
                         {
-                            type: "update"
-                        },
-                        {
                             type: "pull_request",
                             parameters: {
                                 required_approving_review_count: 1,
@@ -364,12 +361,6 @@ export async function POST(request) {
                         {
                             type: "deletion"
 
-                        },
-                        {
-                            type: "update",
-                            parameters: {
-                                update_allows_fetch_and_merge: true
-                            }
                         },
                         {
                             type: "pull_request",
