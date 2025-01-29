@@ -62,7 +62,7 @@ export async function POST(request) {
         console.log(eventData);
         console.log(eventData['multi_select5__1']['chosenValues'])
         //create the repo
-        const repoName = eventData["short_text1__1"]["value"].replaceAll(" ", "-");
+        const repoName = eventData["short_text1__1"]["value"].replaceAll("://", "-").replaceAll("/", "-").replaceAll(" ", "-");
         var ce_org = "ibm-client-engineering";
         var data = {"owner": ce_org, "name": repoName, "description": eventData["long_text0__1"]["text"], "include_all_branches": false}
         //check internal v external
