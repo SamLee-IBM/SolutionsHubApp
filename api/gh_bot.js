@@ -399,7 +399,7 @@ export async function POST(request) {
                 headers: {
                     'Content-Type': 'application/json',
                     "Travis-API-Version": "3",
-                    "Authorization": `token ${CEBOT_TRAVIS_API_KEY}`
+                    "Authorization": `Bearer ${CEBOT_TRAVIS_API_KEY}`
                 },
                 method: 'POST',
                 }).then((response) => {
