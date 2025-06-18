@@ -407,7 +407,7 @@ export async function POST(request) {
                     if (response.status === 403) {
                         console.log(response);
                         console.error(`Error communicating with travis (forbidden) Status: ${response.status}`)
-                        return new Response("Issue authenticating with travis", {status: 401})
+                        throw new Error("Issue authenticating with travis")
                     } else if (response.status === 201) {
                         console.log(response);
                     } else {
