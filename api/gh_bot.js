@@ -4,7 +4,6 @@ import { Octokit } from "octokit";
 
 // export const dynamic = 'force-dynamic'; // static by default, unless reading the request
 export const runtime = 'nodejs';
-import { VercelResponse } from "@vercel/node";
 
  
 export function GET(request) {
