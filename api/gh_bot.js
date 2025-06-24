@@ -270,6 +270,7 @@ export async function POST(request) {
 
                 console.log(result);
             } catch (error) {
+                console.log(error.response)
                 if (error.response.status != 422) { //if it is failing for any reason other than that a repo already exists
                     console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
                     return new Response("Error creating repo", {status: 401});
